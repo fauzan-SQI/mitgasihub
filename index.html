@@ -197,8 +197,27 @@ document.getElementById("summary").innerText=
 function downloadPDF(){
 const { jsPDF } = window.jspdf;
 const doc = new jsPDF();
-doc.text("MITIGASIHUB v6 - LAPORAN ANALISIS RISIKO",10,10);
-doc.text(document.getElementById("summary").innerText,10,20);
+
+let summaryText = document.getElementById("summary").innerText;
+
+// Judul
+doc.setFontSize(16);
+doc.text("MITIGASIHUB v6 - LAPORAN ANALISIS RISIKO",10,15);
+
+// Ringkasan
+doc.setFontSize(12);
+doc.text(summaryText,10,30,{maxWidth:180});
+
+// ===== Ambil Gauge Chart =====
+let gaugeCanvas = document.getElementById("gauge");
+let gaugeImage = gaugeCanvas.toDataURL("image/png");
+doc.addImage(gaugeImage,"PNG",10,60,180,80);
+
+// ===== Ambil Trend Chart =====
+let trendCanvas = document.getElementById("trend");
+let trendImage = trendCanvas.toDataURL("image/png");
+doc.addImage(trendImage,"PNG",10,150,180,80);
+
 doc.save("MitigasiHub_Report.pdf");
 }
 
