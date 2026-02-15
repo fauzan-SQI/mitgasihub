@@ -1,281 +1,208 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>MitigasiHub Pro – DKI Jakarta</title>
-<style>
-:root{
-  --blue:#0b5ed7; --blue2:#084298; --bg:#f4f6f8; --card:#fff; --ok:#198754; --warn:#ffc107; --bad:#dc3545;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#eef3fb, #f7f9fc);}
-header{
-  background:linear-gradient(135deg,#0b5ed7,#5aa3ff);
-  color:#fff;padding:28px 20px;text-align:center;position:sticky;top:0;z-index:10;
-  box-shadow:0 4px 12px rgba(0,0,0,.15)
-}
-header h1{margin:0;font-size:28px;letter-spacing:.5px}
-header p{margin:6px 0 0;opacity:.9}
-nav{
-  display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
-  background:#0a4fc1;padding:10px;position:sticky;top:88px;z-index:9
-}
-nav a{
-  color:#fff;text-decoration:none;padding:8px 14px;border-radius:999px;
-  background:rgba(255,255,255,.12);transition:.25s; font-weight:600
-}
-nav a:hover{background:#fff;color:#0a4fc1;transform:translateY(-1px)}
-main{padding:18px;max-width:1100px;margin:auto}
-section{display:none;animation:fade .4s ease}
-section.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
-.card{
-  background:var(--card);border-radius:14px;padding:16px;
-  box-shadow:0 6px 18px rgba(0,0,0,.08);transition:.25s
-}
-.card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.12)}
-.kpi{display:flex;align-items:center;gap:12px}
-.kpi .num{font-size:28px;font-weight:800}
-.badge{padding:4px 10px;border-radius:999px;font-weight:700;font-size:12px}
-.ok{background:#e8f6ee;color:#198754}.warn{background:#fff3cd;color:#997404}.bad{background:#fde2e1;color:#a71d2a}
-.btn{
-  background:linear-gradient(135deg,#0b5ed7,#6fb0ff);color:#fff;border:0;border-radius:10px;
-  padding:10px 14px;font-weight:700;cursor:pointer;transition:.2s
-}
-.btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
-input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #d7deea}
-.row{display:flex;gap:10px;flex-wrap:wrap}
-.list{display:grid;gap:8px}
-.item{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:10px;border-radius:10px;background:#f7f9fd
-}
-.chart{
-  height:180px;display:flex;align-items:flex-end;gap:8px;padding:8px 0
-}
-.col{flex:1;background:linear-gradient(180deg,#6fb0ff,#0b5ed7);border-radius:8px 8px 0 0;position:relative}
-.col span{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:700}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MitigasiHub v6 - National Champion Edition</title>
 
-/* ===== MAP DKI ===== */
-.map-wrap{position:relative;background:#e9eef7;border-radius:14px;padding:10px}
-#map{
-  position:relative;
-  width:100%;
-  aspect-ratio:16/9;
-  background:linear-gradient(135deg,#dbe7ff,#f6f9ff);
-  border-radius:10px;
-  overflow:hidden;
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+body{
+margin:0;
+font-family:'Segoe UI',sans-serif;
+background:#f4f7fb;
+color:#2c3e50;
+transition:0.3s;
 }
-.dot{
-  position:absolute;width:14px;height:14px;border-radius:50%;
-  background:#dc3545;box-shadow:0 0 0 0 rgba(220,53,69,.7);
-  animation:pulse 1.6s infinite;cursor:pointer
+.dark{
+background:#1e1e1e;
+color:white;
 }
-.dot::after{
-  content:attr(data-name);
-  position:absolute;left:50%;top:-8px;transform:translate(-50%,-100%);
-  background:#fff;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:700;
-  box-shadow:0 4px 10px rgba(0,0,0,.15);white-space:nowrap;opacity:0
+nav{
+background:#0b3d91;
+color:white;
+padding:15px 40px;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
-.dot:hover::after{opacity:1}
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(220,53,69,.7)}
-  70%{box-shadow:0 0 0 10px rgba(220,53,69,0)}
-  100%{box-shadow:0 0 0 0 rgba(220,53,69,0)}
+button{
+background:#0b3d91;
+color:white;
+padding:10px 20px;
+border:none;
+border-radius:6px;
+cursor:pointer;
 }
-.legend{display:flex;gap:8px;align-items:center;margin-top:8px}
-.legend i{width:12px;height:12px;border-radius:50%;background:#dc3545;display:inline-block}
-footer{padding:30px;text-align:center;color:#6b7280}
+button:hover{background:#1565c0;}
+.container{
+max-width:1200px;
+margin:40px auto;
+padding:20px;
+}
+.card{
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+margin-bottom:30px;
+}
+.dark .card{background:#2c2c2c;}
+input,select{
+width:100%;
+padding:8px;
+margin:8px 0 20px 0;
+border-radius:6px;
+border:1px solid #ccc;
+}
+#map{height:350px;}
+footer{
+background:#0b3d91;
+color:white;
+text-align:center;
+padding:20px;
+margin-top:40px;
+}
 </style>
 </head>
+
 <body>
 
-<header>
-  <h1>MitigasiHub Pro</h1>
-  <p>Platform Kolaborasi Pentahelix – Mitigasi Pascabanjir DKI Jakarta</p>
-</header>
-
 <nav>
-  <a href="#" onclick="show('home')">Beranda</a>
-  <a href="#" onclick="show('dash')">Dashboard</a>
-  <a href="#" onclick="show('map')">Peta DKI</a>
-  <a href="#" onclick="show('lapor')">Lapor Warga</a>
-  <a href="#" onclick="show('kolab')">Pentahelix</a>
-  <a href="#" onclick="show('edu')">Edukasi</a>
+<h2>MitigasiHub v6</h2>
+<div>
+<button onclick="toggleMode()">Dark Mode</button>
+</div>
 </nav>
 
-<main>
-<section id="home" class="active">
-  <div class="grid">
-    <div class="card" style="grid-column:span 12">
-      <h2>👋 Selamat Datang</h2>
-      <p>MitigasiHub mengintegrasikan laporan warga, data kebutuhan, edukasi, dan kolaborasi Pentahelix untuk percepatan pemulihan pascabanjir di DKI Jakarta.</p>
-    </div>
-    <div class="card kpi" style="grid-column:span 4">
-      <div class="num" id="kpiReports">0</div><div>Total Laporan</div>
-    </div>
-    <div class="card kpi" style="grid-column:span 4">
-      <div class="num" id="kpiNeeds">0</div><div>Kebutuhan Aktif</div>
-    </div>
-    <div class="card kpi" style="grid-column:span 4">
-      <div class="num" id="kpiVol">18</div><div>Relawan Terlibat</div>
-    </div>
-  </div>
-</section>
+<div class="container">
 
-<section id="dash">
-  <div class="grid">
-    <div class="card" style="grid-column:span 8">
-      <h3>Status Wilayah DKI Jakarta <span class="badge warn">Waspada</span></h3>
-      <div class="list" id="statusList"></div>
-    </div>
-    <div class="card" style="grid-column:span 4">
-      <h3>Distribusi Kebutuhan</h3>
-      <div class="chart" id="needChart"></div>
-    </div>
-    <div class="card" style="grid-column:span 12">
-      <h3>Laporan Warga Terbaru</h3>
-      <div class="list" id="reportList"></div>
-    </div>
-  </div>
-</section>
+<div class="card">
+<h3>Parameter Input</h3>
+<select id="wilayah">
+<option>Jakarta Utara</option>
+<option>Jakarta Barat</option>
+<option>Jakarta Timur</option>
+<option>Jakarta Selatan</option>
+<option>Jakarta Pusat</option>
+</select>
+<input type="number" id="hujan" value="200" placeholder="Curah Hujan (mm)">
+<input type="number" id="kepadatan" value="15000" placeholder="Kepadatan (jiwa/km²)">
+<input type="number" id="elevasi" value="6" placeholder="Elevasi (1-10)">
+<select id="skenario">
+<option value="1">Normal</option>
+<option value="1.3">Siaga</option>
+<option value="1.6">Ekstrem</option>
+</select>
+<button onclick="analisis()">Analisis</button>
+<button onclick="downloadPDF()">Export PDF</button>
+</div>
 
-<section id="map">
-  <div class="grid">
-    <div class="card" style="grid-column:span 8">
-      <h3>🗺️ Peta Sederhana DKI Jakarta</h3>
-      <p>Klik titik merah untuk melihat wilayah rawan banjir.</p>
-      <div class="map-wrap">
-        <div id="map">
-          <div class="dot" data-name="Cililitan – Jaktim" style="left:62%; top:48%"></div>
-          <div class="dot" data-name="Kampung Melayu – Jaktim" style="left:60%; top:52%"></div>
-          <div class="dot" data-name="Kelapa Gading – Jakut" style="left:58%; top:28%"></div>
-          <div class="dot" data-name="Pluit – Jakut" style="left:52%; top:26%"></div>
-          <div class="dot" data-name="Kebon Jeruk – Jakbar" style="left:38%; top:48%"></div>
-          <div class="dot" data-name="Cengkareng – Jakbar" style="left:32%; top:44%"></div>
-          <div class="dot" data-name="Mampang – Jaksel" style="left:55%; top:60%"></div>
-          <div class="dot" data-name="Pasar Minggu – Jaksel" style="left:58%; top:64%"></div>
-          <div class="dot" data-name="Menteng – Jakpus" style="left:50%; top:46%"></div>
-        </div>
-      </div>
-      <div class="legend"><i></i><span>Titik merah = lokasi rawan banjir</span></div>
-    </div>
+<div class="card">
+<h3>Risk Gauge</h3>
+<canvas id="gauge"></canvas>
+<h2 id="scoreText"></h2>
+</div>
 
-    <div class="card" style="grid-column:span 4">
-      <h3>ℹ️ Catatan</h3>
-      <p>
-        Peta ini merupakan <b>simulasi prototipe</b> MitigasiHub untuk wilayah DKI Jakarta.  
-        Titik merah menandai wilayah yang sering terdampak banjir.  
-        Data aktual dapat diintegrasikan dari BPBD & laporan warga.
-      </p>
-    </div>
-  </div>
-</section>
+<div class="card">
+<h3>Trend Projection</h3>
+<canvas id="trend"></canvas>
+</div>
 
-<section id="lapor">
-  <div class="card">
-    <h3>Form Laporan Warga</h3>
-    <div class="row">
-      <input id="fName" placeholder="Nama"/>
-      <input id="fRT" placeholder="RT/RW – Wilayah DKI"/>
-    </div>
-    <div class="row">
-      <select id="fCond">
-        <option value="Banjir">Banjir</option>
-        <option value="Lumpur">Lumpur</option>
-        <option value="Rusak">Rusak</option>
-        <option value="Aman">Aman</option>
-      </select>
-      <select id="fNeed">
-        <option value="Logistik">Logistik</option>
-        <option value="Kesehatan">Kesehatan</option>
-        <option value="Relawan">Relawan</option>
-        <option value="Kebersihan">Kebersihan</option>
-      </select>
-    </div>
-    <textarea id="fNote" rows="3" placeholder="Keterangan singkat"></textarea>
-    <button class="btn" onclick="addReport()">Kirim Laporan</button>
-  </div>
-</section>
+<div class="card">
+<h3>Peta Wilayah DKI Jakarta</h3>
+<div id="map"></div>
+</div>
 
-<section id="kolab">
-  <div class="card">
-    <h3>Kolaborasi Pentahelix</h3>
-    <p>Akademisi – Pemerintah – Komunitas – Bisnis – Media</p>
-  </div>
-</section>
+<div class="card">
+<h3>Executive Intelligence Summary</h3>
+<p id="summary">Menunggu analisis...</p>
+</div>
 
-<section id="edu">
-  <div class="card">
-    <h3>Edukasi Pascabanjir</h3>
-    <ul>
-      <li>Waspada penyakit pascabanjir</li>
-      <li>Disinfeksi area rumah</li>
-      <li>Pengelolaan sampah & lumpur</li>
-    </ul>
-  </div>
-</section>
-</main>
+</div>
 
-<footer>© MitigasiHub – Demo Prototipe OPSI</footer>
+<footer>
+© 2026 MitigasiHub v6 | Smart Disaster Intelligence Prototype
+</footer>
 
 <script>
-let reports = [
-  {name:"Rina", rt:"RT 04/02 Cililitan", cond:"Banjir", need:"Logistik", note:"Air 40cm", t:Date.now()-7200000},
-  {name:"Budi", rt:"RT 01/01 Kampung Melayu", cond:"Lumpur", need:"Kebersihan", note:"Banyak lumpur", t:Date.now()-3600000},
-  {name:"Sari", rt:"RT 06/03 Kelapa Gading", cond:"Rusak", need:"Relawan", note:"Perabot rusak", t:Date.now()-1800000},
-];
-let needsCount = {Logistik:2, Kesehatan:1, Relawan:3, Kebersihan:2};
-let statusItems = [
-  {k:"Wilayah Aktif", v:"DKI Jakarta"},
-  {k:"Cuaca", v:"Hujan Ringan"},
-  {k:"Posko Aktif", v:"5 Lokasi"},
-  {k:"Sekolah Terdampak", v:"3 Unit"},
-];
 
-function render(){
-  document.getElementById('kpiReports').innerText = reports.length;
-  document.getElementById('kpiNeeds').innerText = Object.values(needsCount).reduce((a,b)=>a+b,0);
+let gaugeChart, trendChart;
+let map = L.map('map').setView([-6.2,106.8],11);
 
-  const s = document.getElementById('statusList'); s.innerHTML="";
-  statusItems.forEach(x=>{
-    const d=document.createElement('div'); d.className="item";
-    d.innerHTML=`<b>${x.k}</b><span>${x.v}</span>`; s.appendChild(d);
-  });
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-  const r = document.getElementById('reportList'); r.innerHTML="";
-  reports.slice().reverse().forEach(x=>{
-    const d=document.createElement('div'); d.className="item";
-    const age = Math.floor((Date.now()-x.t)/60000)+" mnt lalu";
-    d.innerHTML=`<div><b>${x.name}</b> • ${x.rt}<br/><small>${x.cond} – ${x.need}</small></div><span>${age}</span>`;
-    r.appendChild(d);
-  });
-
-  const c=document.getElementById('needChart'); c.innerHTML="";
-  const max=Math.max(...Object.values(needsCount),1);
-  Object.entries(needsCount).forEach(([k,v])=>{
-    const col=document.createElement('div'); col.className="col";
-    col.style.height = (v/max*100)+"%";
-    col.innerHTML=`<span>${k} (${v})</span>`;
-    c.appendChild(col);
-  });
-}
-render();
-
-function show(id){
-  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+function toggleMode(){
+document.body.classList.toggle("dark");
 }
 
-function addReport(){
-  const name=fName.value||"Anonim", rt=fRT.value||"RT/RW DKI", cond=fCond.value, need=fNeed.value, note=fNote.value||"-";
-  reports.push({name,rt,cond,need,note,t:Date.now()});
-  needsCount[need]=(needsCount[need]||0)+1;
-  fName.value=fRT.value=fNote.value="";
-  show('dash'); render();
+function analisis(){
+
+let hujan=parseFloat(document.getElementById("hujan").value);
+let kepadatan=parseFloat(document.getElementById("kepadatan").value);
+let elevasi=parseFloat(document.getElementById("elevasi").value);
+let skenario=parseFloat(document.getElementById("skenario").value);
+let wilayah=document.getElementById("wilayah").value;
+
+let hujanNorm=hujan/300;
+let kepadatanNorm=kepadatan/20000;
+let elevasiRisk=(10-elevasi)/10;
+
+let risk=((0.4*hujanNorm)+(0.3*kepadatanNorm)+(0.2*elevasiRisk)+0.1)*skenario;
+let score=Math.min((risk*100).toFixed(2),100);
+
+buatGauge(score);
+buatTrend(score);
+buatSummary(score,wilayah);
 }
+
+function buatGauge(score){
+if(gaugeChart) gaugeChart.destroy();
+gaugeChart=new Chart(document.getElementById("gauge"),{
+type:'doughnut',
+data:{labels:["Risk","Remaining"],
+datasets:[{data:[score,100-score]}]},
+options:{rotation:-90,circumference:180,plugins:{legend:{display:false}}}
+});
+document.getElementById("scoreText").innerText=score+" / 100";
+}
+
+function buatTrend(score){
+if(trendChart) trendChart.destroy();
+trendChart=new Chart(document.getElementById("trend"),{
+type:'line',
+data:{labels:["T-3","T-2","T-1","Now","T+1"],
+datasets:[{label:"Risk Projection",
+data:[score*0.7,score*0.8,score*0.9,score,score*1.1]}]},
+options:{scales:{y:{beginAtZero:true,max:100}}}
+});
+}
+
+function buatSummary(score,wilayah){
+let level="Rendah";
+if(score>=40 && score<70) level="Sedang";
+if(score>=70) level="Tinggi";
+
+document.getElementById("summary").innerText=
+"Sistem mendeteksi tingkat risiko "+level+
+" pada wilayah "+wilayah+
+" dengan skor "+score+
+". Direkomendasikan peningkatan kapasitas drainase, optimalisasi early warning system, dan integrasi monitoring berbasis IoT untuk mitigasi jangka menengah.";
+}
+
+function downloadPDF(){
+const { jsPDF } = window.jspdf;
+const doc = new jsPDF();
+doc.text("MITIGASIHUB v6 - LAPORAN ANALISIS RISIKO",10,10);
+doc.text(document.getElementById("summary").innerText,10,20);
+doc.save("MitigasiHub_Report.pdf");
+}
+
 </script>
+
 </body>
 </html>
