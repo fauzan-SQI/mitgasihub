@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MitigasiHub Pro – DKI Jakarta</title>
+<style>
+:root{
+  --blue:#0b5ed7; --blue2:#084298; --bg:#f4f6f8; --card:#fff; --ok:#198754; --warn:#ffc107; --bad:#dc3545;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#eef3fb, #f7f9fc);}
+header{
+  background:linear-gradient(135deg,#0b5ed7,#5aa3ff);
+  color:#fff;padding:28px 20px;text-align:center;position:sticky;top:0;z-index:10;
+  box-shadow:0 4px 12px rgba(0,0,0,.15)
+}
+header h1{margin:0;font-size:28px;letter-spacing:.5px}
+header p{margin:6px 0 0;opacity:.9}
+nav{
+  display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+  background:#0a4fc1;padding:10px;position:sticky;top:88px;z-index:9
+}
+nav a{
+  color:#fff;text-decoration:none;padding:8px 14px;border-radius:999px;
+  background:rgba(255,255,255,.12);transition:.25s; font-weight:600
+}
+nav a:hover{background:#fff;color:#0a4fc1;transform:translateY(-1px)}
+main{padding:18px;max-width:1100px;margin:auto}
+section{display:none;animation:fade .4s ease}
+section.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.card{
+  background:var(--card);border-radius:14px;padding:16px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);transition:.25s
+}
+.card:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.12)}
+.kpi{display:flex;align-items:center;gap:12px}
+.kpi .num{font-size:28px;font-weight:800}
+.badge{padding:4px 10px;border-radius:999px;font-weight:700;font-size:12px}
+.ok{background:#e8f6ee;color:#198754}.warn{background:#fff3cd;color:#997404}.bad{background:#fde2e1;color:#a71d2a}
+.btn{
+  background:linear-gradient(135deg,#0b5ed7,#6fb0ff);color:#fff;border:0;border-radius:10px;
+  padding:10px 14px;font-weight:700;cursor:pointer;transition:.2s
+}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.05)}
+input,select,textarea{width:100%;padding:10px;border-radius:10px;border:1px solid #d7deea}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.list{display:grid;gap:8px}
+.item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px;border-radius:10px;background:#f7f9fd
+}
+.chart{
+  height:180px;display:flex;align-items:flex-end;gap:8px;padding:8px 0
+}
+.col{flex:1;background:linear-gradient(180deg,#6fb0ff,#0b5ed7);border-radius:8px 8px 0 0;position:relative}
+.col span{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:700}
+
+/* ===== MAP DKI ===== */
+.map-wrap{position:relative;background:#e9eef7;border-radius:14px;padding:10px}
+#map{
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  background:linear-gradient(135deg,#dbe7ff,#f6f9ff);
+  border-radius:10px;
+  overflow:hidden;
+}
+.dot{
+  position:absolute;width:14px;height:14px;border-radius:50%;
+  background:#dc3545;box-shadow:0 0 0 0 rgba(220,53,69,.7);
+  animation:pulse 1.6s infinite;cursor:pointer
+}
+.dot::after{
+  content:attr(data-name);
+  position:absolute;left:50%;top:-8px;transform:translate(-50%,-100%);
+  background:#fff;padding:4px 8px;border-radius:8px;font-size:12px;font-weight:700;
+  box-shadow:0 4px 10px rgba(0,0,0,.15);white-space:nowrap;opacity:0
+}
+.dot:hover::after{opacity:1}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(220,53,69,.7)}
+  70%{box-shadow:0 0 0 10px rgba(220,53,69,0)}
+  100%{box-shadow:0 0 0 0 rgba(220,53,69,0)}
+}
+.legend{display:flex;gap:8px;align-items:center;margin-top:8px}
+.legend i{width:12px;height:12px;border-radius:50%;background:#dc3545;display:inline-block}
+footer{padding:30px;text-align:center;color:#6b7280}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>MitigasiHub Pro</h1>
+  <p>Platform Kolaborasi Pentahelix – Mitigasi Pascabanjir DKI Jakarta</p>
+</header>
+
+<nav>
+  <a href="#" onclick="show('home')">Beranda</a>
+  <a href="#" onclick="show('dash')">Dashboard</a>
+  <a href="#" onclick="show('map')">Peta DKI</a>
+  <a href="#" onclick="show('lapor')">Lapor Warga</a>
+  <a href="#" onclick="show('kolab')">Pentahelix</a>
+  <a href="#" onclick="show('edu')">Edukasi</a>
+</nav>
+
+<main>
+<section id="home" class="active">
+  <div class="grid">
+    <div class="card" style="grid-column:span 12">
+      <h2>👋 Selamat Datang</h2>
+      <p>MitigasiHub mengintegrasikan laporan warga, data kebutuhan, edukasi, dan kolaborasi Pentahelix untuk percepatan pemulihan pascabanjir di DKI Jakarta.</p>
+    </div>
+    <div class="card kpi" style="grid-column:span 4">
+      <div class="num" id="kpiReports">0</div><div>Total Laporan</div>
+    </div>
+    <div class="card kpi" style="grid-column:span 4">
+      <div class="num" id="kpiNeeds">0</div><div>Kebutuhan Aktif</div>
+    </div>
+    <div class="card kpi" style="grid-column:span 4">
+      <div class="num" id="kpiVol">18</div><div>Relawan Terlibat</div>
+    </div>
+  </div>
+</section>
+
+<section id="dash">
+  <div class="grid">
+    <div class="card" style="grid-column:span 8">
+      <h3>Status Wilayah DKI Jakarta <span class="badge warn">Waspada</span></h3>
+      <div class="list" id="statusList"></div>
+    </div>
+    <div class="card" style="grid-column:span 4">
+      <h3>Distribusi Kebutuhan</h3>
+      <div class="chart" id="needChart"></div>
+    </div>
+    <div class="card" style="grid-column:span 12">
+      <h3>Laporan Warga Terbaru</h3>
+      <div class="list" id="reportList"></div>
+    </div>
+  </div>
+</section>
+
+<section id="map">
+  <div class="grid">
+    <div class="card" style="grid-column:span 8">
+      <h3>🗺️ Peta Sederhana DKI Jakarta</h3>
+      <p>Klik titik merah untuk melihat wilayah rawan banjir.</p>
+      <div class="map-wrap">
+        <div id="map">
+          <div class="dot" data-name="Cililitan – Jaktim" style="left:62%; top:48%"></div>
+          <div class="dot" data-name="Kampung Melayu – Jaktim" style="left:60%; top:52%"></div>
+          <div class="dot" data-name="Kelapa Gading – Jakut" style="left:58%; top:28%"></div>
+          <div class="dot" data-name="Pluit – Jakut" style="left:52%; top:26%"></div>
+          <div class="dot" data-name="Kebon Jeruk – Jakbar" style="left:38%; top:48%"></div>
+          <div class="dot" data-name="Cengkareng – Jakbar" style="left:32%; top:44%"></div>
+          <div class="dot" data-name="Mampang – Jaksel" style="left:55%; top:60%"></div>
+          <div class="dot" data-name="Pasar Minggu – Jaksel" style="left:58%; top:64%"></div>
+          <div class="dot" data-name="Menteng – Jakpus" style="left:50%; top:46%"></div>
+        </div>
+      </div>
+      <div class="legend"><i></i><span>Titik merah = lokasi rawan banjir</span></div>
+    </div>
+
+    <div class="card" style="grid-column:span 4">
+      <h3>ℹ️ Catatan</h3>
+      <p>
+        Peta ini merupakan <b>simulasi prototipe</b> MitigasiHub untuk wilayah DKI Jakarta.  
+        Titik merah menandai wilayah yang sering terdampak banjir.  
+        Data aktual dapat diintegrasikan dari BPBD & laporan warga.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="lapor">
+  <div class="card">
+    <h3>Form Laporan Warga</h3>
+    <div class="row">
+      <input id="fName" placeholder="Nama"/>
+      <input id="fRT" placeholder="RT/RW – Wilayah DKI"/>
+    </div>
+    <div class="row">
+      <select id="fCond">
+        <option value="Banjir">Banjir</option>
+        <option value="Lumpur">Lumpur</option>
+        <option value="Rusak">Rusak</option>
+        <option value="Aman">Aman</option>
+      </select>
+      <select id="fNeed">
+        <option value="Logistik">Logistik</option>
+        <option value="Kesehatan">Kesehatan</option>
+        <option value="Relawan">Relawan</option>
+        <option value="Kebersihan">Kebersihan</option>
+      </select>
+    </div>
+    <textarea id="fNote" rows="3" placeholder="Keterangan singkat"></textarea>
+    <button class="btn" onclick="addReport()">Kirim Laporan</button>
+  </div>
+</section>
+
+<section id="kolab">
+  <div class="card">
+    <h3>Kolaborasi Pentahelix</h3>
+    <p>Akademisi – Pemerintah – Komunitas – Bisnis – Media</p>
+  </div>
+</section>
+
+<section id="edu">
+  <div class="card">
+    <h3>Edukasi Pascabanjir</h3>
+    <ul>
+      <li>Waspada penyakit pascabanjir</li>
+      <li>Disinfeksi area rumah</li>
+      <li>Pengelolaan sampah & lumpur</li>
+    </ul>
+  </div>
+</section>
+</main>
+
+<footer>© MitigasiHub – Demo Prototipe OPSI</footer>
+
+<script>
+let reports = [
+  {name:"Rina", rt:"RT 04/02 Cililitan", cond:"Banjir", need:"Logistik", note:"Air 40cm", t:Date.now()-7200000},
+  {name:"Budi", rt:"RT 01/01 Kampung Melayu", cond:"Lumpur", need:"Kebersihan", note:"Banyak lumpur", t:Date.now()-3600000},
+  {name:"Sari", rt:"RT 06/03 Kelapa Gading", cond:"Rusak", need:"Relawan", note:"Perabot rusak", t:Date.now()-1800000},
+];
+let needsCount = {Logistik:2, Kesehatan:1, Relawan:3, Kebersihan:2};
+let statusItems = [
+  {k:"Wilayah Aktif", v:"DKI Jakarta"},
+  {k:"Cuaca", v:"Hujan Ringan"},
+  {k:"Posko Aktif", v:"5 Lokasi"},
+  {k:"Sekolah Terdampak", v:"3 Unit"},
+];
+
+function render(){
+  document.getElementById('kpiReports').innerText = reports.length;
+  document.getElementById('kpiNeeds').innerText = Object.values(needsCount).reduce((a,b)=>a+b,0);
+
+  const s = document.getElementById('statusList'); s.innerHTML="";
+  statusItems.forEach(x=>{
+    const d=document.createElement('div'); d.className="item";
+    d.innerHTML=`<b>${x.k}</b><span>${x.v}</span>`; s.appendChild(d);
+  });
+
+  const r = document.getElementById('reportList'); r.innerHTML="";
+  reports.slice().reverse().forEach(x=>{
+    const d=document.createElement('div'); d.className="item";
+    const age = Math.floor((Date.now()-x.t)/60000)+" mnt lalu";
+    d.innerHTML=`<div><b>${x.name}</b> • ${x.rt}<br/><small>${x.cond} – ${x.need}</small></div><span>${age}</span>`;
+    r.appendChild(d);
+  });
+
+  const c=document.getElementById('needChart'); c.innerHTML="";
+  const max=Math.max(...Object.values(needsCount),1);
+  Object.entries(needsCount).forEach(([k,v])=>{
+    const col=document.createElement('div'); col.className="col";
+    col.style.height = (v/max*100)+"%";
+    col.innerHTML=`<span>${k} (${v})</span>`;
+    c.appendChild(col);
+  });
+}
+render();
+
+function show(id){
+  document.querySelectorAll('section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function addReport(){
+  const name=fName.value||"Anonim", rt=fRT.value||"RT/RW DKI", cond=fCond.value, need=fNeed.value, note=fNote.value||"-";
+  reports.push({name,rt,cond,need,note,t:Date.now()});
+  needsCount[need]=(needsCount[need]||0)+1;
+  fName.value=fRT.value=fNote.value="";
+  show('dash'); render();
+}
+</script>
+</body>
+</html>
