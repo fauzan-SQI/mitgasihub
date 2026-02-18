@@ -3,225 +3,227 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MitigasiHub v6 - National Champion Edition</title>
+<title>MitigasiHub</title>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <style>
-body{
-margin:0;
-font-family:'Segoe UI',sans-serif;
-background:#f4f7fb;
-color:#2c3e50;
-transition:0.3s;
-}
-.dark{
-background:#1e1e1e;
-color:white;
-}
-nav{
-background:#0b3d91;
-color:white;
-padding:15px 40px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
-button{
-background:#0b3d91;
-color:white;
-padding:10px 20px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-}
-button:hover{background:#1565c0;}
-.container{
-max-width:1200px;
-margin:40px auto;
-padding:20px;
-}
-.card{
-background:white;
-padding:25px;
-border-radius:10px;
-box-shadow:0 8px 20px rgba(0,0,0,0.08);
-margin-bottom:30px;
-}
-.dark .card{background:#2c2c2c;}
-input,select{
-width:100%;
-padding:8px;
-margin:8px 0 20px 0;
-border-radius:6px;
-border:1px solid #ccc;
-}
-#map{height:350px;}
-footer{
-background:#0b3d91;
-color:white;
-text-align:center;
-padding:20px;
-margin-top:40px;
-}
+body{margin:0;font-family:Arial;background:#f4f6f9;}
+header{background:#0b5ed7;color:white;padding:15px;text-align:center;}
+.container{padding:15px;}
+.card{background:white;padding:15px;border-radius:10px;margin-bottom:15px;box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+input,select{padding:8px;width:100%;margin-bottom:10px;}
+button{padding:10px 15px;background:#0b5ed7;color:white;border:none;cursor:pointer;}
+button:hover{background:#084298;}
+#map{height:350px;border-radius:10px;}
+.hidden{display:none;}
+table{width:100%;border-collapse:collapse;}
+th,td{border:1px solid #ddd;padding:8px;text-align:center;}
+th{background:#0b5ed7;color:white;}
+.low{background:#d4edda;}
+.medium{background:#fff3cd;}
+.high{background:#f8d7da;}
+.critical{background:#721c24;color:white;}
 </style>
 </head>
-
 <body>
 
-<nav>
-<h2>MitigasiHub v6</h2>
-<div>
-<button onclick="toggleMode()">Dark Mode</button>
-</div>
-</nav>
+<header>
+<h2>MITIGASIHUB AI – Admin Dashboard</h2>
+</header>
 
 <div class="container">
 
+<!-- LOGIN -->
+<div id="loginPage" class="card">
+<h3>Login Admin</h3>
+<input type="text" id="username" placeholder="Username">
+<input type="password" id="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<p id="loginError" style="color:red;"></p>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="hidden">
+
 <div class="card">
-<h3>Parameter Input</h3>
-<select id="wilayah">
-<option>Jakarta Utara</option>
-<option>Jakarta Barat</option>
-<option>Jakarta Timur</option>
-<option>Jakarta Selatan</option>
-<option>Jakarta Pusat</option>
+<button onclick="logout()">Logout</button>
+</div>
+
+<div class="card">
+<h3>Input Parameter Risiko</h3>
+<input type="text" id="locationInput" placeholder="Contoh: Jakarta Timur">
+
+<select id="rainfall">
+<option value="1">Hujan Rendah</option>
+<option value="2">Hujan Sedang</option>
+<option value="3">Hujan Tinggi</option>
 </select>
-<input type="number" id="hujan" value="200" placeholder="Curah Hujan (mm)">
-<input type="number" id="kepadatan" value="15000" placeholder="Kepadatan (jiwa/km²)">
-<input type="number" id="elevasi" value="6" placeholder="Elevasi (1-10)">
-<select id="skenario">
-<option value="1">Normal</option>
-<option value="1.3">Siaga</option>
-<option value="1.6">Ekstrem</option>
+
+<select id="elevation">
+<option value="3">Elevasi Tinggi</option>
+<option value="2">Elevasi Sedang</option>
+<option value="1">Elevasi Rendah</option>
 </select>
-<button onclick="analisis()">Analisis</button>
-<button onclick="downloadPDF()">Export PDF</button>
+
+<select id="drainage">
+<option value="1">Drainase Baik</option>
+<option value="2">Drainase Sedang</option>
+<option value="3">Drainase Buruk</option>
+</select>
+
+<button onclick="analyzeRisk()">Analisis</button>
+<button onclick="exportPDF()">Export PDF</button>
 </div>
 
 <div class="card">
-<h3>Risk Gauge</h3>
-<canvas id="gauge"></canvas>
-<h2 id="scoreText"></h2>
+<div id="riskResult">Belum dianalisis</div>
+<canvas id="riskChart"></canvas>
 </div>
 
 <div class="card">
-<h3>Trend Projection</h3>
-<canvas id="trend"></canvas>
-</div>
-
-<div class="card">
-<h3>Peta Wilayah DKI Jakarta</h3>
 <div id="map"></div>
 </div>
 
 <div class="card">
-<h3>Executive Intelligence Summary</h3>
-<p id="summary">Menunggu analisis...</p>
+<h3>Database Lokal (Riwayat Analisis)</h3>
+<table>
+<thead>
+<tr>
+<th>Lokasi</th>
+<th>Skor</th>
+<th>Kategori</th>
+<th>Tanggal</th>
+</tr>
+</thead>
+<tbody id="historyTable"></tbody>
+</table>
 </div>
 
 </div>
-
-<footer>
-© 2026 MitigasiHub v6 | Smart Disaster Intelligence Prototype
-</footer>
+</div>
 
 <script>
 
-let gaugeChart, trendChart;
+// ===== LOGIN SYSTEM =====
+const ADMIN_USER="admin";
+const ADMIN_PASS="12345";
+
+function login(){
+let u=document.getElementById("username").value;
+let p=document.getElementById("password").value;
+
+if(u===ADMIN_USER && p===ADMIN_PASS){
+localStorage.setItem("mitigasiLogin","true");
+document.getElementById("loginPage").classList.add("hidden");
+document.getElementById("dashboard").classList.remove("hidden");
+loadHistory();
+}else{
+document.getElementById("loginError").innerText="Login gagal!";
+}
+}
+
+function logout(){
+localStorage.removeItem("mitigasiLogin");
+location.reload();
+}
+
+if(localStorage.getItem("mitigasiLogin")==="true"){
+document.getElementById("loginPage").classList.add("hidden");
+document.getElementById("dashboard").classList.remove("hidden");
+}
+
+// ===== MAP =====
 let map = L.map('map').setView([-6.2,106.8],11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+attribution:'© OpenStreetMap'
+}).addTo(map);
+let marker;
+let chart;
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+// ===== ANALYSIS =====
+function analyzeRisk(){
 
-function toggleMode(){
-document.body.classList.toggle("dark");
-}
+let rainfall=parseInt(rainfall.value);
+let elevation=parseInt(elevation.value);
+let drainage=parseInt(drainage.value);
+let location=document.getElementById("locationInput").value;
 
-function analisis(){
+let score=rainfall+(4-elevation)+drainage;
 
-let hujan=parseFloat(document.getElementById("hujan").value);
-let kepadatan=parseFloat(document.getElementById("kepadatan").value);
-let elevasi=parseFloat(document.getElementById("elevasi").value);
-let skenario=parseFloat(document.getElementById("skenario").value);
-let wilayah=document.getElementById("wilayah").value;
+let category="";
+if(score<=4)category="LOW";
+else if(score<=6)category="MEDIUM";
+else if(score<=8)category="HIGH";
+else category="CRITICAL";
 
-let hujanNorm=hujan/300;
-let kepadatanNorm=kepadatan/20000;
-let elevasiRisk=(10-elevasi)/10;
+document.getElementById("riskResult").innerHTML=
+"<b>Risiko:</b> "+category+" (Skor "+score+")";
 
-let risk=((0.4*hujanNorm)+(0.3*kepadatanNorm)+(0.2*elevasiRisk)+0.1)*skenario;
-let score=Math.min((risk*100).toFixed(2),100);
-
-buatGauge(score);
-buatTrend(score);
-buatSummary(score,wilayah);
-}
-
-function buatGauge(score){
-if(gaugeChart) gaugeChart.destroy();
-gaugeChart=new Chart(document.getElementById("gauge"),{
-type:'doughnut',
-data:{labels:["Risk","Remaining"],
-datasets:[{data:[score,100-score]}]},
-options:{rotation:-90,circumference:180,plugins:{legend:{display:false}}}
+if(chart)chart.destroy();
+chart=new Chart(document.getElementById("riskChart"),{
+type:'bar',
+data:{labels:["Hujan","Elevasi","Drainase"],
+datasets:[{label:"Parameter",data:[rainfall,4-elevation,drainage]}]}
 });
-document.getElementById("scoreText").innerText=score+" / 100";
-}
 
-function buatTrend(score){
-if(trendChart) trendChart.destroy();
-trendChart=new Chart(document.getElementById("trend"),{
-type:'line',
-data:{labels:["T-3","T-2","T-1","Now","T+1"],
-datasets:[{label:"Risk Projection",
-data:[score*0.7,score*0.8,score*0.9,score,score*1.1]}]},
-options:{scales:{y:{beginAtZero:true,max:100}}}
+// SIMPAN DATABASE LOKAL
+let history=JSON.parse(localStorage.getItem("mitigasiData"))||[];
+history.push({
+lokasi:location,
+skor:score,
+kategori:category,
+tanggal:new Date().toLocaleString()
+});
+localStorage.setItem("mitigasiData",JSON.stringify(history));
+loadHistory();
+
+// MAP SEARCH
+fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${location}`)
+.then(res=>res.json())
+.then(data=>{
+if(data.length>0){
+let lat=parseFloat(data[0].lat);
+let lon=parseFloat(data[0].lon);
+map.setView([lat,lon],13);
+if(marker)map.removeLayer(marker);
+marker=L.marker([lat,lon]).addTo(map)
+.bindPopup("Risiko: "+category).openPopup();
+}
 });
 }
 
-function buatSummary(score,wilayah){
-let level="Rendah";
-if(score>=40 && score<70) level="Sedang";
-if(score>=70) level="Tinggi";
-
-document.getElementById("summary").innerText=
-"Sistem mendeteksi tingkat risiko "+level+
-" pada wilayah "+wilayah+
-" dengan skor "+score+
-". Direkomendasikan peningkatan kapasitas drainase, optimalisasi early warning system, dan integrasi monitoring berbasis IoT untuk mitigasi jangka menengah.";
+// ===== LOAD HISTORY =====
+function loadHistory(){
+let history=JSON.parse(localStorage.getItem("mitigasiData"))||[];
+let table=document.getElementById("historyTable");
+table.innerHTML="";
+history.forEach(d=>{
+table.innerHTML+=`
+<tr>
+<td>${d.lokasi}</td>
+<td>${d.skor}</td>
+<td>${d.kategori}</td>
+<td>${d.tanggal}</td>
+</tr>`;
+});
 }
 
-function downloadPDF(){
+// ===== EXPORT PDF =====
+async function exportPDF(){
 const { jsPDF } = window.jspdf;
-const doc = new jsPDF();
+let doc=new jsPDF();
+doc.text("MitigasiHub AI Report",20,20);
+doc.text(document.getElementById("riskResult").innerText,20,40);
 
-let summaryText = document.getElementById("summary").innerText;
-
-// Judul
-doc.setFontSize(16);
-doc.text("MITIGASIHUB v6 - LAPORAN ANALISIS RISIKO",10,15);
-
-// Ringkasan
-doc.setFontSize(12);
-doc.text(summaryText,10,30,{maxWidth:180});
-
-// ===== Ambil Gauge Chart =====
-let gaugeCanvas = document.getElementById("gauge");
-let gaugeImage = gaugeCanvas.toDataURL("image/png");
-doc.addImage(gaugeImage,"PNG",10,60,180,80);
-
-// ===== Ambil Trend Chart =====
-let trendCanvas = document.getElementById("trend");
-let trendImage = trendCanvas.toDataURL("image/png");
-doc.addImage(trendImage,"PNG",10,150,180,80);
-
-doc.save("MitigasiHub_Report.pdf");
+let img=document.getElementById("riskChart").toDataURL("image/png");
+doc.addImage(img,'PNG',20,50,160,90);
+doc.save("MitigasiHub_Admin_Report.pdf");
 }
 
 </script>
-
 </body>
 </html>
